@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Spire Seer - Slay the Spire 2 mod.
+    Game assemblies are NOT in this repo (they belong to Mega Crit). Point Sts2RefsDir at a folder holding copies of
+    sts2.dll, GodotSharp.dll and 0Harmony.dll from <game>/data_sts2_<platform>/ - set it in local.props
+    (see local.props.example) or pass /p:Sts2RefsDir=...
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>SpireSeer</AssemblyName>
+    <RootNamespace>SpireSeer</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <!-- one managed AnyCPU dll for Windows, macOS and Linux -->
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <Deterministic>true</Deterministic>
+    <DebugType>portable</DebugType>
+    <PathMap>$(MSBuildProjectDirectory)=SpireSeer</PathMap>
+    <NoWarn>$(NoWarn);MSB3270</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests/**" />
+    <None Remove="tests/**" />
+  </ItemGroup>
+
+  <!-- Community library, embedded so the mod is a single dll + manifest (no Godot .pck). -->
+  <ItemGroup>
+    <EmbeddedResource Include="data/*.json" LogicalName="SpireSeer.data.%(Filename).json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="sts2"><HintPath>$(Sts2RefsDir)/sts2.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="GodotSharp"><HintPath>$(Sts2RefsDir)/GodotSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(Sts2RefsDir)/0Harmony.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <Target Name="CheckRefs" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(Sts2RefsDir)' == '' Or !Exists('$(Sts2RefsDir)/sts2.dll')"
+           Text="Game assemblies not found. Copy sts2.dll, GodotSharp.dll and 0Harmony.dll from the game's data_sts2_* folder and set Sts2RefsDir in local.props (see local.props.example)." />
+  </Target>
+
+  <!-- Stage dist/SpireSeer/ = what goes into <game>/mods/SpireSeer/ and the Workshop upload's content/ folder. -->
+  <Target Name="StageMod" AfterTargets="Build">
+    <PropertyGroup><StageDir>$(MSBuildProjectDirectory)/dist/SpireSeer</StageDir></PropertyGroup>
+    <Copy SourceFiles="$(TargetPath);$(MSBuildProjectDirectory)/SpireSeer.json" DestinationFolder="$(StageDir)" />
+    <Copy Condition="'$(Sts2ModsDir)' != ''" SourceFiles="$(TargetPath);$(MSBuildProjectDirectory)/SpireSeer.json" DestinationFolder="$(Sts2ModsDir)/SpireSeer" />
+  </Target>
+</Project>

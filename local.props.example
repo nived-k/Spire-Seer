@@ -1,0 +1,9 @@
+<Project>
+  <!-- Copy to local.props (git-ignored) and adjust. -->
+  <PropertyGroup>
+    <!-- Folder holding sts2.dll, GodotSharp.dll, 0Harmony.dll copied from the game's data_sts2_<platform> folder. -->
+    <Sts2RefsDir>C:\path\to\sts2-refs</Sts2RefsDir>
+    <!-- Optional: the game's mods folder, to deploy on every build (e.g. ...\Slay the Spire 2\mods). -->
+    <Sts2ModsDir></Sts2ModsDir>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,27 @@
+# build output
+bin/
+obj/
+dist/
+*.zip
+TestResults/
+
+# machine-specific paths
+local.props
+
+# never commit Mega Crit's assemblies or decompiled game code
+refs/
+sts2-refs/
+decomp/
+*.dll
+*.pdb
+
+# uploader workspace bits that are not source (mod_id.txt IS committed)
+workshop/content/
+*.log
+
+# local secrets / personal files, just in case
+.env
+*.save
+.vs/
+.idea/
+*.user
