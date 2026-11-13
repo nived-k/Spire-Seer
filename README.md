@@ -12,7 +12,7 @@ Numbers are **lift**: the win rate of runs that made that choice minus the avera
 Display only. It does not change gameplay (`affects_gameplay: false`), uses no network, collects nothing and needs no account.
 
 ## Install
-- **Steam Workshop:** subscribe, then enable it under Settings → Mod Settings.
+- **Steam Workshop:** [subscribe here](https://steamcommunity.com/sharedfiles/filedetails/?id=3838857040), then enable it under Settings → Mod Settings. If you also have a manual copy in `<game folder>/mods/SpireSeer/`, delete it: the game disables the Workshop copy when both exist.
 - **Manual:** put `SpireSeer.dll` and `SpireSeer.json` in `<game folder>/mods/SpireSeer/`.
 
 Controls: **F9** shows or hides the panel, **Shift+F9** changes the text size, and you drag the panel to move it. Position and size are saved in the game's user data folder (`SpireSeer.settings.json`).
@@ -32,7 +32,7 @@ dotnet test tests/SpireSeer.Tests    # coach logic vs reference outputs (no game
 - `src/Game/`: reads the run and the screens from the game (Harmony patches). This is the only part a game patch can break.
 - `src/UI/`: the overlay panel.
 - `data/`: the community library (aggregated statistics only), one file per character and game version (`<character>.<version>.json`), embedded in the dll. At runtime the mod uses the newest version that isn't newer than the game.
-- `workshop/`: Steam Workshop metadata for Mega Crit's `ModUploader`.
+- `workshop/`: Steam Workshop metadata for Mega Crit's `ModUploader` (`mod_id.txt` = Workshop item 3838857040; keep it so uploads update the same item).
 
 ## Credits
 - Community run data and game data: [Spire Codex](https://spire-codex.com), a fan-made database. Spire Codex is not affiliated with Mega Crit.
