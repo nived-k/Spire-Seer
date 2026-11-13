@@ -15,7 +15,9 @@ Display only. It does not change gameplay (`affects_gameplay: false`), uses no n
 - **Steam Workshop:** subscribe, then enable it under Settings → Mod Settings.
 - **Manual:** put `SpireSeer.dll` and `SpireSeer.json` in `<game folder>/mods/SpireSeer/`.
 
-Controls: **F9** shows or hides the panel. Drag the panel by its title bar.
+Controls: **F9** shows or hides the panel, **Shift+F9** changes the text size, and you drag the panel to move it. Position and size are saved in the game's user data folder (`SpireSeer.settings.json`).
+
+Characters without community data yet (currently the Fool) show "no data yet" instead of advice.
 
 ## Build
 You need the .NET 9 SDK. The game's assemblies are not in this repo, so copy `sts2.dll`, `GodotSharp.dll` and `0Harmony.dll` from `<game>/data_sts2_<platform>/` to a folder outside the repo.
