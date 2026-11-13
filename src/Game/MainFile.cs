@@ -4,6 +4,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Screens.MainMenu;
 using MegaCrit.Sts2.Core.Runs;
 using SpireSeer.UI;
 
@@ -40,9 +41,10 @@ internal static class InputHook
     static void Postfix(InputEvent inputEvent) => Advisor.Safe("input", () => Overlay.OnInput(inputEvent));
 }
 
-/// <summary>Show the panel as soon as the game's root node is ready.</summary>
-[HarmonyPatch(typeof(NGame), nameof(NGame._Ready))]
-internal static class GameReady
+/// <summary>Show the panel on the main menu, so players can see the mod is running before they start a run.
+/// (Mods are loaded during NGame's startup, so an NGame._Ready patch would come too late.)</summary>
+[HarmonyPatch(typeof(NMainMenu), nameof(NMainMenu._Ready))]
+internal static class MainMenuReady
 {
-    static void Postfix() => Advisor.Safe("game ready", Advisor.ShowDeck);
+    static void Postfix() => Advisor.Safe("main menu", Advisor.ShowMenu);
 }

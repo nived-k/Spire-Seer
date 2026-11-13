@@ -1,6 +1,6 @@
 # Spire Seer
 
-An in-game drafting coach for **Slay the Spire 2**. It scores your options from roughly 140,000 community runs of the current patch:
+An in-game drafting coach for **Slay the Spire 2**. It scores your options from community runs of your game version: about 370,000 runs for v0.107.1 (main branch) and 144,000 for the v0.111 beta. It picks the matching set automatically.
 
 - **Card rewards:** every card on offer plus SKIP, compared against the average reward screen at the same point. When you're committed to an archetype, a card's score also counts how it does inside that archetype.
 - **Shops:** the best set of purchases for the gold you have, card removal included.
@@ -31,7 +31,7 @@ dotnet test tests/SpireSeer.Tests    # coach logic vs reference outputs (no game
 - `src/Core/`: the coach logic in pure C# with no game references, unit-tested against `tests/golden/`.
 - `src/Game/`: reads the run and the screens from the game (Harmony patches). This is the only part a game patch can break.
 - `src/UI/`: the overlay panel.
-- `data/`: the community library (aggregated statistics only), embedded in the dll.
+- `data/`: the community library (aggregated statistics only), one file per character and game version (`<character>.<version>.json`), embedded in the dll. At runtime the mod uses the newest version that isn't newer than the game.
 - `workshop/`: Steam Workshop metadata for Mega Crit's `ModUploader`.
 
 ## Credits

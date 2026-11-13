@@ -2,11 +2,11 @@
   "id": "SpireSeer",
   "name": "Spire Seer",
   "author": "nived-k",
-  "description": "Drafting coach: scores card rewards, shops, relic choices and events from ~140k community runs of the current patch, and warns about focus, deck size and HP. Display only - does not change gameplay.",
-  "version": "v0.1.1",
+  "description": "Drafting coach: scores card rewards, shops, relic choices and events from community runs of your game version (v0.107.1: ~370k runs, v0.111 beta: ~144k), and warns about focus, deck size and HP. Display only - does not change gameplay.",
+  "version": "v0.1.2",
   "has_pck": false,
   "has_dll": true,
-  "min_game_version": "0.111.0",
+  "min_game_version": "0.107.1",
   "dependencies": [],
   "affects_gameplay": false
 }

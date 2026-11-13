@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using MegaCrit.Sts2.Core.Debug;
 using MegaCrit.Sts2.Core.Entities.Merchant;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
@@ -64,8 +65,23 @@ internal static class Advisor
     private static string Row(bool pick, string name, string lift, string extra = "") =>
         (pick ? $"[color={Gold}]>[/color] [b]{Esc(name)}[/b]" : $"   {Esc(name)}") + $"  {lift}" + (extra.Length > 0 ? $"  [color={Grey}]{Esc(extra)}[/color]" : "") + "\n";
 
+    private static bool _versionPicked;
+
+    /// <summary>Use the community data that matches the running game (main branch vs beta differ in balance).</summary>
+    private static void PickDataVersion()
+    {
+        if (_versionPicked) return;
+        _versionPicked = true;
+        string? game = null;
+        try { game = ReleaseInfoManager.Instance.SemVer?.ToString(); }
+        catch (Exception e) { Log.Warn($"[SpireSeer] game version unknown: {e.Message}"); }
+        var v = Store.SelectFor(game);
+        Log.Info($"[SpireSeer] game {game ?? "?"} -> community data {v} (shipped: {string.Join(", ", Store.Common.Versions)})");
+    }
+
     private static bool Ready(out RunSnapshot run, out Library lib)
     {
+        PickDataVersion();
         run = RunReader.Snapshot()!;
         lib = null!;
         if (run == null) { Overlay.Show("", "Waiting for a run..."); return false; }
@@ -83,8 +99,25 @@ internal static class Advisor
 
     // ---- screens --------------------------------------------------------------------------------------------------
 
+    private static readonly HashSet<string> Logged = new();
+
+    /// <summary>Logs the first time each screen kind is shown (keeps the log short but shows the hooks work).</summary>
+    private static void Trace(string kind)
+    {
+        if (Logged.Add(kind)) Log.Info($"[SpireSeer] first {kind} panel");
+    }
+
+    public static void ShowMenu()
+    {
+        Trace("menu");
+        var v = Assembly.GetExecutingAssembly().GetName().Version;
+        Overlay.Show($"[b]Spire Seer[/b] [color={Grey}]v{v?.ToString(3)}[/color]",
+            $"Ready - start or continue a run.\n[color={Grey}]F9 hide/show · Shift+F9 text size · drag to move[/color]");
+    }
+
     public static void ShowDeck()
     {
+        Trace("deck");
         if (!Ready(out var run, out var lib)) return;
         var prof = DeckProfile.Build(lib, Store.Common, run.Deck);
         var sb = new StringBuilder();
@@ -95,6 +128,7 @@ internal static class Advisor
 
     public static void CardReward(IReadOnlyList<CardModel> cards)
     {
+        Trace("card reward");
         if (!Ready(out var run, out var lib)) return;
         var offers = cards.Select(c => new Offer(c.Id.Entry, c.IsUpgraded)).ToList();
         var a = CardCoach.Advise(lib, Store.Common, run, offers);
@@ -116,6 +150,7 @@ internal static class Advisor
 
     public static void RelicChoice(IReadOnlyList<RelicModel> relics, string source, string title = "Relic choice")
     {
+        Trace("relic");
         if (!Ready(out var run, out var lib)) return;
         var names = relics.ToDictionary(r => r.Id.Entry, r => r.Title.GetFormattedText());
         var a = ChoiceCoach.Relics(lib, run, relics.Select(r => r.Id.Entry).ToList(), source, id => names[id]);
@@ -128,6 +163,7 @@ internal static class Advisor
 
     public static void Event(EventModel ev)
     {
+        Trace("event");
         var options = ev.CurrentOptions;
         if (ev is AncientEventModel)
         {
@@ -158,6 +194,7 @@ internal static class Advisor
 
     public static void Shop(MerchantInventory? inv)
     {
+        Trace("shop");
         if (inv == null || !Ready(out var run, out var lib)) return;
         var items = new List<ShopOffer>();
         var names = new Dictionary<(string, string), string>();

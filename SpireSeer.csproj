@@ -8,6 +8,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <AssemblyName>SpireSeer</AssemblyName>
+    <Version>0.1.2</Version>
     <RootNamespace>SpireSeer</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>

@@ -3,7 +3,6 @@ using System.IO;
 using System.Text.Json;
 using Godot;
 using MegaCrit.Sts2.Core.Logging;
-using MegaCrit.Sts2.Core.Nodes;
 
 namespace SpireSeer.UI;
 
@@ -99,14 +98,31 @@ internal static class Overlay
         _panel?.ResetSize();
     }
 
-    /// <summary>Adds the layer under the game's root node once the game exists.</summary>
+    private static bool _attachQueued, _loggedAttached;
+
+    /// <summary>Adds the layer directly under the window's root viewport (not under a game node, so no game
+    /// container, scaling or visibility can hide it).</summary>
     private static bool EnsureAttached()
     {
         if (_layer == null) Build();
-        if (_layer!.IsInsideTree()) return true;
-        var game = NGame.Instance;
-        if (game == null || !GodotObject.IsInstanceValid(game)) return false;
-        if (_layer.GetParent() == null) game.CallDeferred(Node.MethodName.AddChild, _layer);
+        if (_layer!.IsInsideTree())
+        {
+            if (!_loggedAttached)
+            {
+                _loggedAttached = true;
+                Log.Info($"[SpireSeer] overlay attached under {_layer.GetParent()?.GetPath()}, visible={_layer.Visible}, " +
+                         $"panel at {_panel?.Position} size {_panel?.Size}, viewport {_panel?.GetViewportRect().Size}");
+            }
+            return true;
+        }
+        if (_attachQueued) return false;
+        var root = (Engine.GetMainLoop() as SceneTree)?.Root;
+        if (root == null) { Log.Warn("[SpireSeer] no scene tree root yet"); return false; }
+        _attachQueued = true;
+        root.CallDeferred(Node.MethodName.AddChild, _layer);
+        // re-show once the deferred add has happened, so the attach is logged and the size is right
+        Callable.From(Refresh).CallDeferred();
+        Log.Info("[SpireSeer] overlay attach queued");
         return false;
     }
 
